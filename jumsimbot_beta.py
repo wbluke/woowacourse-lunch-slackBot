@@ -1,6 +1,10 @@
 import os
 import slack
 from pprint import pprint
+from WorksheetReader import Worksheet, Restaurant
+
+JSON_KEYFILE_ADDRESS = 'lunchBot-worksheet-key.json'
+SHEET_NAME = 'woowacourse-lunch-sheet'
 
 @slack.RTMClient.run_on(event='message')
 def say_hello(**payload):
@@ -8,45 +12,26 @@ def say_hello(**payload):
     data = payload['data']
     web_client = payload['web_client']
     rtm_client = payload['rtm_client']
-    if '점심!' in data['text']:
+    if '밥!' in data['text']:
         channel_id = data['channel']
         thread_ts = data['ts']
         user = data['user']
+
+        worksheet = Worksheet(JSON_KEYFILE_ADDRESS, SHEET_NAME)
+        restaurant = worksheet.get_restaurant(2)
         
         # web_client.chat_postMessage(channel=channel_id, text=f"Hi <@{user}>!")
         web_client.chat_postMessage(
-            channel=channel_id,\
-            blocks=[\
-                {\
-                    "type": "section",\
-                    "text": {\
-                        "type": "mrkdwn",\
-                        "text": "Danny Torrence left the following review for your property:"\
-                    }   \
-                },\
-                {\
-                    "type": "section",\
-                    "text": {\
-                        "type": "mrkdwn",\
-                        "text": "<https://store.naver.com/restaurants/detail?id=1390661394|Overlook Hotel> \n :star: \n Doors had too many axe holes, guest in room " +\
-                        "237 was far too rowdy, whole place felt stuck in the 1920s."\
-                    },\
-                    "accessory": {\
-                        "type": "image",\
-                        "image_url": "https://images.pexels.com/photos/750319/pexels-photo-750319.jpeg",\
-                        "alt_text": "Haunted hotel image"\
-                    }\
-                },\
-                {\
-                    "type": "section",\
-                    "fields": [\
-                        {\
-                            "type": "mrkdwn",\
-                            "text": "*Average Rating*\n1.0"\
-                        }\
-                    ]\
-                }\
-            ]\
+            channel=channel_id,
+            blocks=[
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "<" + restaurant.get_naver_place_addr() + "|" + restaurant.get_name() + "> \n 대표 메뉴 : " + restaurant.get_popular_menu() + "  가격 : " + restaurant.get_price_of_popular_menu() + " \n :thumbsup: " + restaurant.get_good() + ":thumbsdown: " + restaurant.get_bad()
+                    }   
+                }
+            ]
         )
 
 slack_token = os.environ["SLACK_API_TOKEN"]
