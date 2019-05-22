@@ -39,11 +39,12 @@ def say_hello(**payload):
 
 worksheet = Worksheet(JSON_KEYFILE_ADDRESS, SHEET_NAME)
 restaurants = []
+
 rows = worksheet.get_all_values()
 header = rows.pop(0)   
 
-for row in rows:
-    restaurants.append(row)
+for rowNo in range(len(worksheet.get_all_restaurant_names())):
+    restaurants.append(worksheet.get_restaurant(rowNo + 1))
 
 slack_token = os.environ["SLACK_API_TOKEN"]
 rtm_client = slack.RTMClient(token=slack_token)
