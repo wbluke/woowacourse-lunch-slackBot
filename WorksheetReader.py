@@ -39,25 +39,25 @@ class Restaurant():
         self.restaurant_info = restaurant_info
 
     def get_name(self):
-        return self.restaurant_info[1]
+        return self.restaurant_info[0]
     
     def get_type(self):
-        return self.restaurant_info[2]
+        return self.restaurant_info[1]
 
     def get_popular_menu(self):
-        return self.restaurant_info[3]
+        return self.restaurant_info[2]
 
     def get_price_of_popular_menu(self):
-        return self.restaurant_info[4]
+        return self.restaurant_info[3]
 
     def get_naver_place_addr(self):
-        return self.restaurant_info[5]
+        return self.restaurant_info[4]
     
     def get_good(self):
-        return self.restaurant_info[6]
+        return self.restaurant_info[5]
 
     def get_bad(self):
-        return self.restaurant_info[7]
+        return self.restaurant_info[6]
 
 
 if __name__ == '__main__':
