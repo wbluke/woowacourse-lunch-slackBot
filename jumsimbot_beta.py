@@ -19,17 +19,44 @@ def say_hello(**payload):
 
         worksheet = Worksheet(JSON_KEYFILE_ADDRESS, SHEET_NAME)
         restaurant = worksheet.get_restaurant(2)
+
+        restaurant_color = None
+        restaurant_thumb_url = "./image/"
+
+        if eq(restaurant.get_type(), "한식"):
+            restaurant_color = "#7CD197"
+            restaurant_thumb_url += "koreanFood.png"
         
         # web_client.chat_postMessage(channel=channel_id, text=f"Hi <@{user}>!")
         web_client.chat_postMessage(
             channel=channel_id,
-            blocks=[
+            # blocks=[
+            #     {
+            #         "type": "section",
+            #         "text": {
+            #             "type": "mrkdwn",
+            #             "text": "<" + restaurant.get_naver_place_addr() + "|" + restaurant.get_name() + "> \n 대표 메뉴 : " + restaurant.get_popular_menu() + "  가격 : " + restaurant.get_price_of_popular_menu() + " \n :thumbsup: " + restaurant.get_good() + ":thumbsdown: " + restaurant.get_bad()
+            #         }   
+            #     }
+            # ],
+            attachments=[
                 {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "<" + restaurant.get_naver_place_addr() + "|" + restaurant.get_name() + "> \n 대표 메뉴 : " + restaurant.get_popular_menu() + "  가격 : " + restaurant.get_price_of_popular_menu() + " \n :thumbsup: " + restaurant.get_good() + ":thumbsdown: " + restaurant.get_bad()
-                    }   
+                    "fallback": "ReferenceError - " + restaurant.get_naver_place_addr(),
+                    "text": "<" + restaurant.get_naver_place_addr() + "|" + restaurant.get_name() + ">",
+                    "fields": [
+                        {
+                            "title": "대표 메뉴",
+                            "value": restaurant.get_popular_menu() + " " + restaurant.get_price_of_popular_menu() + "원",
+                            "short": True
+                        },
+                        {
+                            "title": "추천 정보",
+                            "value": ":thumbsup: "+ restaurant.get_good() + "   :thumbsdown: " + restaurant.get_bad(),
+                            "short": True
+                        }
+                    ],
+                    "color": "#7CD197",
+			        "thumb_url": "./image/"
                 }
             ]
         )
