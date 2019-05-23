@@ -7,7 +7,7 @@ JSON_KEYFILE_ADDRESS = 'lunchBot-worksheet-key.json'
 SHEET_NAME = 'woowacourse-lunch-sheet'
 
 @slack.RTMClient.run_on(event='message')
-def say_hello(**payload):
+def recommend(**payload):
     pprint(payload)
     data = payload['data']
     web_client = payload['web_client']
@@ -17,35 +17,33 @@ def say_hello(**payload):
         thread_ts = data['ts']
         user = data['user']
 
-        restaurant = worksheet.get_restaurant(2)
-
-        restaurant_color = '#000000'
-        restaurant_thumb_url = './image/'
-        restaurant_type = restaurant.get_type()
-
-        if restaurant_type == '한식':
-            restaurant_color = '#218e16'
-            restaurant_thumb_url += 'koreanFood.png'
-        elif restaurant_type == '일식':
-            restaurant_color = '#ea0000'
-            restaurant_thumb_url += 'japaneseFood.png'
-        elif restaurant_type == '중식':
-            restaurant_color = '#401c0e'
-            restaurant_thumb_url += 'chineseFood.png'
-        elif restaurant_type == '양식':
-            restaurant_color = '#eaff08'
-            restaurant_thumb_url += 'westernFood.png'
-        elif restaurant_type == '분식':
-            restaurant_color = '#ff7f00'
-            restaurant_thumb_url += 'flourBasedFood.png'
-        elif restaurant_type == '카페':
-            restaurant_color = '#fbed36'
-            restaurant_thumb_url += 'cafeFood.png'
-        else:
-            restaurant_color = '#5ce7e3'
-            restaurant_thumb_url += 'etcFood.png'
-        
         for restaurant in restaurants:
+            restaurant_color = '#000000'
+            restaurant_thumb_url = './image/'
+            restaurant_type = restaurant.get_type()
+
+            if restaurant_type == '한식':
+                restaurant_color = '#218e16'
+                restaurant_thumb_url += 'koreanFood.png'
+            elif restaurant_type == '일식':
+                restaurant_color = '#ea0000'
+                restaurant_thumb_url += 'japaneseFood.png'
+            elif restaurant_type == '중식':
+                restaurant_color = '#401c0e'
+                restaurant_thumb_url += 'chineseFood.png'
+            elif restaurant_type == '양식':
+                restaurant_color = '#eaff08'
+                restaurant_thumb_url += 'westernFood.png'
+            elif restaurant_type == '분식':
+                restaurant_color = '#ff7f00'
+                restaurant_thumb_url += 'flourBasedFood.png'
+            elif restaurant_type == '카페':
+                restaurant_color = '#fbed36'
+                restaurant_thumb_url += 'cafeFood.png'
+            else:
+                restaurant_color = '#5ce7e3'
+                restaurant_thumb_url += 'etcFood.png'
+            
             web_client.chat_postMessage(
                 channel=channel_id,
                 attachments=[
@@ -69,6 +67,24 @@ def say_hello(**payload):
                     }
                 ]
             )
+
+@slack.RTMClient.run_on(event="reaction_added")
+def update_emoji(**payload):
+    print('====================================== reaction_added =========================================')
+    pprint(payload)
+    data = payload["data"]
+    web_client = payload["web_client"]
+    channel_id = data["item"]["channel"]
+    user_id = data["user"]
+
+    if data['reaction'] == 'thumbsup':
+        pass
+        # TODO : good reaction 캐시에 업데이트
+    
+    elif data['reaction'] == 'thumbsdown':
+        pass
+        # TODO : bad reaction 캐시에 업데이트
+
 
 worksheet = Worksheet(JSON_KEYFILE_ADDRESS, SHEET_NAME)
 restaurants = []
