@@ -19,7 +19,7 @@ def recommend(**payload):
 
         for restaurant in restaurants:
             restaurant_color = '#000000'
-            restaurant_thumb_url = './image/'
+            restaurant_thumb_url = 'http://cdn.wbluke.com/lunch_bot_image/'
             restaurant_type = restaurant.get_type()
 
             if restaurant_type == '한식':
@@ -43,7 +43,7 @@ def recommend(**payload):
             else:
                 restaurant_color = '#5ce7e3'
                 restaurant_thumb_url += 'etcFood.png'
-            
+
             web_client.chat_postMessage(
                 channel=channel_id,
                 attachments=[
