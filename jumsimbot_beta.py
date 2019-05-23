@@ -19,28 +19,31 @@ def say_hello(**payload):
 
         restaurant = worksheet.get_restaurant(2)
 
-        restaurant_color = None
+        restaurant_color = '#000000'
         restaurant_thumb_url = './image/'
         restaurant_type = restaurant.get_type()
 
         if restaurant_type == '한식':
             restaurant_color = '#218e16'
             restaurant_thumb_url += 'koreanFood.png'
-        if restaurant_type == '일식':
+        elif restaurant_type == '일식':
             restaurant_color = '#ea0000'
             restaurant_thumb_url += 'japaneseFood.png'
-        if restaurant_type == '중식':
+        elif restaurant_type == '중식':
             restaurant_color = '#401c0e'
             restaurant_thumb_url += 'chineseFood.png'
-        if restaurant_type == '양식':
+        elif restaurant_type == '양식':
             restaurant_color = '#eaff08'
             restaurant_thumb_url += 'westernFood.png'
-        if restaurant_type == '분식':
+        elif restaurant_type == '분식':
             restaurant_color = '#ff7f00'
             restaurant_thumb_url += 'flourBasedFood.png'
-        if restaurant_type == '카페':
+        elif restaurant_type == '카페':
             restaurant_color = '#fbed36'
             restaurant_thumb_url += 'cafeFood.png'
+        else:
+            restaurant_color = '#5ce7e3'
+            restaurant_thumb_url += 'etcFood.png'
         
         for restaurant in restaurants:
             web_client.chat_postMessage(
