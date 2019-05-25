@@ -48,38 +48,40 @@ def recommend(**payload):
                 channel=channel_id,
                 attachments=[
                     {
-                        "fallback": "ReferenceError - " + restaurant.get_naver_place_addr(),
-                        "text": "<" + restaurant.get_naver_place_addr() + "|" + restaurant.get_name() + ">",
-                        "fields": [
+                        'fallback': 'ReferenceError - ' + restaurant.get_naver_place_addr(),
+                        'text': '<' + restaurant.get_naver_place_addr() + '|' + restaurant.get_name() + '>',
+                        'fields': [
                             {
-                                "title": "대표 메뉴",
-                                "value": restaurant.get_popular_menu() + " " + restaurant.get_price_of_popular_menu() + "원",
-                                "short": True
+                                'title': '대표 메뉴',
+                                'value': restaurant.get_popular_menu() + ' ' + restaurant.get_price_of_popular_menu() + '원',
+                                'short': True
                             },
                             {
-                                "title": "추천 정보",
-                                "value": ":thumbsup: "+ restaurant.get_good() + "   :thumbsdown: " + restaurant.get_bad(),
-                                "short": True
+                                'title': '추천 정보',
+                                'value': ':thumbsup: '+ restaurant.get_good() + '   :thumbsdown: ' + restaurant.get_bad(),
+                                'short': True
                             }
                         ],
-                        "color": restaurant_color,
-			            "thumb_url": restaurant_thumb_url
+                        'color': restaurant_color,
+			            'thumb_url': restaurant_thumb_url
                     }
                 ]
             )
 
-@slack.RTMClient.run_on(event="reaction_added")
+@slack.RTMClient.run_on(event='reaction_added')
 def update_emoji(**payload):
     print('====================================== reaction_added =========================================')
     pprint(payload)
-    data = payload["data"]
-    web_client = payload["web_client"]
-    channel_id = data["item"]["channel"]
-    user_id = data["user"]
+    data = payload['data']
+    web_client = payload['web_client']
+    channel_id = data['item']['channel']
+    ts = data['item']['ts']
+    user_id = data['user']
 
     if data['reaction'] == 'thumbsup':
         pass
         # TODO : good reaction 캐시에 업데이트
+        # history API 에 ts 와 channel_id 를 사용하여 원래의 메시지에 접근
     
     elif data['reaction'] == 'thumbsdown':
         pass
