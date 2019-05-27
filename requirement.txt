@@ -1,1 +1,5 @@
 slackclient==2.0.1
+gspread
+--upgrade oauth2client
+PyOpenSSL
+pprint
