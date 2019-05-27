@@ -1,17 +1,16 @@
 import random
 import copy
-from Queue import Queue
 
 class RestaurantRepo():
-    _restaurant_info = dict()
-    _changed_restaurants = Queue()
     
     def __init__(self, gspreadClient):
-        self.gspreadClient = gspreadClient
+        self._restaurant_info = dict()
+        self._changed_restaurants = set()
+        self._gspreadClient = gspreadClient
         self.fetch_all_restaurants()
 
     def fetch_all_restaurants(self):
-        all_restaurants = self.gspreadClient.get_all_restaurants()
+        all_restaurants = self._gspreadClient.get_all_restaurants()
         for restaurant in all_restaurants:
             self._restaurant_info[restaurant.get_primary_key()] = restaurant
 
@@ -52,4 +51,4 @@ if __name__ == "__main__":
 
     choiced = restaurantRepo.get_random_recommendations_as_many_of(4)
     for restaurant in choiced:
-        print(restaurant.get_primary_key())
+        print(type(restaurant.get_primary_key()))

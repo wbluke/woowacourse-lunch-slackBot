@@ -1,6 +1,7 @@
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 from Restaurant import Restaurant
+from pprint import pprint
 
 class GspreadClient():
     def __init__(self, json_keyfile_address, file_name):
@@ -35,15 +36,14 @@ class GspreadClient():
         cells = self.worksheet.range(f'A2:H{self.num_of_restaurants + 1}')
         num_of_restaurant_cell_indices = len(Restaurant.cell_indices)
 
+        list_of_list = []
+        for idx in range(0, len(cells), num_of_restaurant_cell_indices):
+            list_of_list.append([cell.value for cell in cells[idx:idx + num_of_restaurant_cell_indices]])
+
         list_of_values = []
-        values = []
-        cell_count = 0
-        for cell in cells:
-            values.append(cell.value)
-            cell_count += 1
-            if (cell_count % num_of_restaurant_cell_indices == 0):
-                list_of_values.append(values)
-                values = []
+        for values in list_of_list:
+            list_of_values.append(list(map(lambda value: int(value) if value.isdigit() else value, values)))
+        
         return list_of_values
 
     def get_all_restaurants(self):
