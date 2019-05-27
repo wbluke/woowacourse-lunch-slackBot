@@ -30,3 +30,9 @@ class Restaurant():
 
     def get_bad(self):
         return self.restaurant_info[Restaurant.cell_indices['bad']]
+
+    def increase_good(self):
+        self.restaurant_info[Restaurant.cell_indices['good']] += 1
+
+    def increase_bad(self):
+        self.restaurant_info[Restaurant.cell_indices['bad']] += 1

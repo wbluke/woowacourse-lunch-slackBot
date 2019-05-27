@@ -1,7 +1,6 @@
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 from Restaurant import Restaurant
-from pprint import pprint
 
 class GspreadClient():
     def __init__(self, json_keyfile_address, file_name):

@@ -2,7 +2,6 @@ import random
 import copy
 
 class RestaurantRepo():
-    
     def __init__(self, gspreadClient):
         self._restaurant_info = dict()
         self._changed_restaurants = set()
@@ -32,10 +31,17 @@ class RestaurantRepo():
         pass
 
     def update_thumbsup(self, primary_key):
-        pass
+        restaurant = self._restaurant_info[primary_key]
+        restaurant.increase_good()
+        self.append_primary_key_to_changed_restaurants(primary_key)
 
     def update_thumbsdown(self, primary_key):
-        pass
+        restaurant = self._restaurant_info[primary_key]
+        restaurant.increase_bad()
+        self.append_primary_key_to_changed_restaurants(primary_key)
+
+    def append_primary_key_to_changed_restaurants(self, primary_key):
+        self._changed_restaurants.add(primary_key)
 
 
 if __name__ == "__main__":
@@ -45,10 +51,24 @@ if __name__ == "__main__":
     SHEET_NAME = 'woowacourse-lunch-sheet'
 
     from GspreadClient import GspreadClient
+    from pprint import pprint
 
     gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
     restaurantRepo = RestaurantRepo(gspreadClient)
 
-    choiced = restaurantRepo.get_random_recommendations_as_many_of(4)
-    for restaurant in choiced:
-        print(type(restaurant.get_primary_key()))
+    # choiced = restaurantRepo.get_random_recommendations_as_many_of(4)
+    # for restaurant in choiced:
+    #     print(type(restaurant.get_primary_key()))
+
+    restaurantRepo.update_thumbsup(2)
+    restaurantRepo.update_thumbsdown(8)
+    restaurantRepo.update_thumbsup(5)
+    restaurantRepo.update_thumbsup(2)
+
+    restaurant_info = restaurantRepo._restaurant_info
+    pprint(restaurant_info.get(2).get_good())
+    pprint(restaurant_info.get(2).get_bad())
+    pprint(restaurant_info.get(5).get_good())
+    pprint(restaurant_info.get(5).get_bad())
+    pprint(restaurant_info.get(8).get_good())
+    pprint(restaurant_info.get(8).get_bad())
