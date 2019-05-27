@@ -3,3 +3,6 @@
 
 # Install Requirements
 <code>pip3 install -r requirement</code>
+
+# Run Recommandation
+<code>python3 start_recommand.py</code>
