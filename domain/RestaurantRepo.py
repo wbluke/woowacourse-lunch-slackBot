@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-class RestaurantRepo():
-    _retaurant_info = []
-    
-    def __init__(self):
-        pass
-
-# gspread_client_task
-=======
 import random
 import copy
 
@@ -46,7 +37,6 @@ class RestaurantRepo():
     def update_thumbsdown(self, primary_key):
         pass
 
-
 if __name__ == "__main__":
     # for testing this class
 
@@ -61,4 +51,3 @@ if __name__ == "__main__":
     choiced = restaurantRepo.get_random_recommendations_as_many_of(4)
     for restaurant in choiced:
         print(type(restaurant.get_primary_key()))
->>>>>>> 1f64b2c19b7eaf0b758ab04a909bc12fdaccc536
