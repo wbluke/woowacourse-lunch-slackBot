@@ -1,6 +1,6 @@
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
-from Restaurant import Restaurant
+from domain.Restaurant import Restaurant
 from pprint import pprint
 
 class GspreadClient():

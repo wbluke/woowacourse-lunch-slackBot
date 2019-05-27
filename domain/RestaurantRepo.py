@@ -43,7 +43,7 @@ if __name__ == "__main__":
     JSON_KEYFILE_ADDRESS = '../lunchBot-worksheet-key.json'
     SHEET_NAME = 'woowacourse-lunch-sheet'
 
-    from GspreadClient import GspreadClient
+    from domain.GspreadClient import GspreadClient
 
     gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
     restaurantRepo = RestaurantRepo(gspreadClient)
