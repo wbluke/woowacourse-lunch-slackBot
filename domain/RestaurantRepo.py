@@ -1,6 +1,7 @@
 import random
 import copy
 
+
 class RestaurantRepo():
     def __init__(self, gspreadClient):
         self._restaurant_info = dict()
@@ -54,3 +55,11 @@ class RestaurantRepo():
 
     def append_primary_key_to_changed_restaurants(self, primary_key):
         self._changed_restaurants.add(primary_key)
+
+from domain.GspreadClient import GspreadClient
+
+JSON_KEYFILE_ADDRESS = '../lunchBot-worksheet-key.json'
+SHEET_NAME = 'woowacourse-lunch-sheet'
+
+gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
+restaurant_repo = RestaurantRepo(gspreadClient)
