@@ -3,7 +3,6 @@ import copy
 
 
 class RestaurantRepo():
-    
     def __init__(self, gspreadClient):
         self._restaurant_info = dict()
         self._changed_restaurants = set()
@@ -30,13 +29,26 @@ class RestaurantRepo():
         return list(self._restaurant_info.keys())
 
     def upload_changed_restaurants(self):
-        pass
+        while len(self._changed_restaurants) > 0:
+            primary_key = self._changed_restaurants.pop()
+
+            good_points = self._restaurant_info[primary_key].get_good()
+            bad_points = self._restaurant_info[primary_key].get_bad()
+            self._gspreadClient.update_good_points_on(primary_key, good_points)
+            self._gspreadClient.update_bad_points_on(primary_key, bad_points)
 
     def update_thumbsup(self, primary_key):
-        pass
+        restaurant = self._restaurant_info[primary_key]
+        restaurant.increase_good()
+        self.append_primary_key_to_changed_restaurants(primary_key)
 
     def update_thumbsdown(self, primary_key):
-        pass
+        restaurant = self._restaurant_info[primary_key]
+        restaurant.increase_bad()
+        self.append_primary_key_to_changed_restaurants(primary_key)
+
+    def append_primary_key_to_changed_restaurants(self, primary_key):
+        self._changed_restaurants.add(primary_key)
 
 from domain.GspreadClient import GspreadClient
 
@@ -45,15 +57,3 @@ SHEET_NAME = 'woowacourse-lunch-sheet'
 
 gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
 restaurant_repo = RestaurantRepo(gspreadClient)
-
-
-if __name__ == "__main__":
-    # for testing this class
-
-
-    from domain.GspreadClient import GspreadClient
-
-
-    choiced = restaurant_repo.get_random_recommendations_as_many_of(4)
-    for restaurant in choiced:
-        print(type(restaurant.get_primary_key()))

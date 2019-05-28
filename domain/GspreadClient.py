@@ -25,15 +25,19 @@ class GspreadClient():
     def get_all_restaurant_names(self):
         return self.worksheet.col_values(2)[1:]
 
-    def get_restaurant(self, restaurant_number):
-        cells = self.worksheet.range(f'A{restaurant_number + 1}:H{restaurant_number + 1}')
+    def get_restaurant_row_num_with(self, primary_key):
+        return primary_key + 1
+
+    def get_restaurant(self, primary_key):
+        restaurant_row_num = self.get_restaurant_row_num_with(primary_key)
+        cells = self.worksheet.range(f'A{restaurant_row_num}:H{restaurant_row_num}')
         return Restaurant([cell.value for cell in cells])
     
     def get_num_of_restaurants(self):
         return self.num_of_restaurants
 
     def get_all_values(self):
-        cells = self.worksheet.range(f'A2:H{self.num_of_restaurants + 1}')
+        cells = self.worksheet.range(f'A2:H{self.get_restaurant_row_num_with(self.num_of_restaurants)}')
         num_of_restaurant_cell_indices = len(Restaurant.cell_indices)
 
         list_of_list = []
@@ -51,8 +55,8 @@ class GspreadClient():
 
         return [Restaurant(row) for row in list_of_values]
 
-    def increase_one_good_point_on_key_no(self, cell_primary_key, updated_points):
-        pass
+    def update_good_points_on(self, primary_key, updated_points):
+        self.worksheet.update_cell(self.get_restaurant_row_num_with(primary_key), Restaurant.cell_indices['good'] + 1, updated_points)
 
-    def increase_one_bad_point_on_key_no(self, cell_primary_key, updated_points):
-        pass
+    def update_bad_points_on(self, primary_key, updated_points):
+        self.worksheet.update_cell(self.get_restaurant_row_num_with(primary_key), Restaurant.cell_indices['bad'] + 1, updated_points)
