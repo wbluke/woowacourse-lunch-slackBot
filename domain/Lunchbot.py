@@ -5,23 +5,22 @@ from domain.RestaurantRepo import restaurant_repo
 class LunchBot:
     def __init__(self):
         self._slack_token = os.environ['SLACK_API_TOKEN']
-#        self.repository = restaurant_repo
 
     def start(self):
         rtm_client = slack.RTMClient(token=self._slack_token)
         rtm_client.start()
 
-    @slack.RTMClient.run_on(event='message')
-    def recommend(**payload):
-        data = payload['data']
-        web_client = payload['web_client']
-        
-        if '밥!' in data['text']:
-            channel_id = data['channel']
-            thread_ts = data['ts']
+@slack.RTMClient.run_on(event='message')
+def recommend(**payload):
+    data = payload['data']
+    web_client = payload['web_client']
+    
+    if '밥!' in data['text']:
+        channel_id = data['channel']
+        thread_ts = data['ts']
 
-            restaurants = restaurant_repo.get_random_recommendations_as_many_of(4)
-            send_recommandation(web_client, channel_id, restaurants)
+        restaurants = restaurant_repo.get_random_recommendations_as_many_of(4)
+        send_recommandation(web_client, channel_id, restaurants)
 
 def send_recommandation(web_client, channel_id, restaurants):
     for restaurant in restaurants:            
@@ -37,12 +36,12 @@ def send_recommandation(web_client, channel_id, restaurants):
                     'fields': [
                         {
                             'title': '대표 메뉴',
-                            'value': restaurant.get_popular_menu() + ' ' + restaurant.get_price_of_popular_menu() + '원',
+                            'value': restaurant.get_popular_menu() + ' ' + str(restaurant.get_price_of_popular_menu()) + '원',
                             'short': True
                         },
                         {
                             'title': '추천 정보',
-                            'value': ':thumbsup: '+ restaurant.get_good() + '   :thumbsdown: ' + restaurant.get_bad(),
+                            'value': ':thumbsup: '+ str(restaurant.get_good()) + '   :thumbsdown: ' + str(restaurant.get_bad()),
                             'short': True
                         }
                     ],
