@@ -1,6 +1,7 @@
 import os
 import slack
 from domain.RestaurantRepo import restaurant_repo
+from domain.TimeStampTable import primary_key_of
 
 class LunchBot:
     def __init__(self):
