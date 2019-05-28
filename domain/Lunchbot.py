@@ -102,10 +102,13 @@ def update_emoji(**payload):
     channel_id = data['item']['channel']
     ts = data['item']['ts']
     
-    primary_key_of = ts_table_of[channel_id]
-    primary_key = primary_key_of[ts]
+    if channel_id in ts_table_of:
+        primary_key_of = ts_table_of[channel_id]
 
-    if data['reaction'] == '+1':
-        restaurant_repo.update_thumbsup(primary_key)
-    elif data['reaction'] == '-1':
-        restaurant_repo.update_thumbsdown(primary_key)
+        if ts in primary_key_of:
+            primary_key = primary_key_of[ts]
+
+            if data['reaction'] == '+1':
+                restaurant_repo.update_thumbsup(primary_key)
+            elif data['reaction'] == '-1':
+                restaurant_repo.update_thumbsdown(primary_key)
