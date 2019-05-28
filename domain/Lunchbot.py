@@ -1,5 +1,7 @@
 import os
 import slack
+from threading import Thread
+
 from domain.RestaurantRepo import restaurant_repo
 from domain.TimeStampTable import TimeStampTable
 
@@ -13,7 +15,15 @@ class LunchBot:
         rtm_client = slack.RTMClient(token=self._slack_token)
         rtm_client.start()
 
+def run_in_new_thread(fn):
+    def run(**payload):
+        new_thread = Thread(target=fn, kwargs=payload)
+        new_thread.start()
+        new_thread.join()
+    return run
+
 @slack.RTMClient.run_on(event='message')
+@run_in_new_thread
 def recommend(**payload):
     data = payload['data']
     web_client = payload['web_client']
@@ -23,7 +33,6 @@ def recommend(**payload):
 
         restaurants = restaurant_repo.get_random_recommendations_as_many_of(4)
         send_recommandation(web_client, channel_id, restaurants)
-
 
 def send_recommandation(web_client, channel_id, restaurants):
     for restaurant in restaurants:            
@@ -99,5 +108,5 @@ def update_emoji(**payload):
 
     if data['reaction'] == '+1':
         restaurant_repo.update_thumbsup(primary_key)
-    elif data['reaction'] == '+1':
+    elif data['reaction'] == '-1':
         restaurant_repo.update_thumbsdown(primary_key)

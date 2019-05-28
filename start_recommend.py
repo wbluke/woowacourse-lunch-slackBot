@@ -31,11 +31,8 @@ if __name__ == "__main__":
     uploading_thread = Thread(target=upload_changed_restaurants)
     fetch_thread = Thread(target=fetch_all_restaurants)
 
-    lunch_bot = LunchBot()
-    lunch_bot.start()        
-    
     uploading_thread.start()
     fetch_thread.start()
 
-    uploading_thread.join()
-    fetch_thread.join()
+    lunch_bot = LunchBot()
+    lunch_bot.start()        
