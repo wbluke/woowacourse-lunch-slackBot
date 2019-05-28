@@ -5,14 +5,14 @@ from threading import Thread
 
 from domain.GspreadClient import GspreadClient
 from domain.Lunchbot import LunchBot
-from domain.RestaurantRepo import RestaurantRepo
+from domain.RestaurantRepo import restaurant_repo
 import domain.TimeStampTable
 
-JSON_KEYFILE_ADDRESS = 'lunchBot-worksheet-key.json'
-SHEET_NAME = 'woowacourse-lunch-sheet'
-gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
+# JSON_KEYFILE_ADDRESS = 'lunchBot-worksheet-key.json'
+# SHEET_NAME = 'woowacourse-lunch-sheet'
+# gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
 
-restaurant_repo = RestaurantRepo(gspreadClient)
+# restaurant_repo = RestaurantRepo(gspreadClient)
 
 def upload_changed_restaurants():
     print("start gspread client")
