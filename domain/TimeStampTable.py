@@ -13,5 +13,3 @@ class TimeStampTable(OrderedDict):
         if self.ts_number_limit is not None:
             while len(self) > self.ts_number_limit:
                 self.popitem(last=False)
-
-primary_key_of = TimeStampTable(size_limit=100)
