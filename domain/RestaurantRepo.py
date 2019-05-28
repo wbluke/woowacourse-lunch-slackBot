@@ -1,6 +1,7 @@
 import random
 import copy
 
+
 class RestaurantRepo():
     
     def __init__(self, gspreadClient):
@@ -37,17 +38,22 @@ class RestaurantRepo():
     def update_thumbsdown(self, primary_key):
         pass
 
+from domain.GspreadClient import GspreadClient
+
+JSON_KEYFILE_ADDRESS = '../lunchBot-worksheet-key.json'
+SHEET_NAME = 'woowacourse-lunch-sheet'
+
+gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
+restaurant_repo = RestaurantRepo(gspreadClient)
+
+
 if __name__ == "__main__":
     # for testing this class
 
-    JSON_KEYFILE_ADDRESS = '../lunchBot-worksheet-key.json'
-    SHEET_NAME = 'woowacourse-lunch-sheet'
 
     from domain.GspreadClient import GspreadClient
 
-    gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
-    restaurantRepo = RestaurantRepo(gspreadClient)
 
-    choiced = restaurantRepo.get_random_recommendations_as_many_of(4)
+    choiced = restaurant_repo.get_random_recommendations_as_many_of(4)
     for restaurant in choiced:
         print(type(restaurant.get_primary_key()))
