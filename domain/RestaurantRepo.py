@@ -13,9 +13,14 @@ class RestaurantRepo():
         all_restaurants = self._gspreadClient.get_all_restaurants()
         
         new_primary_keys = [restaurant.get_primary_key() for restaurant in all_restaurants]
+
+        keys_to_del = []
         for primary_key in self._restaurant_info:
             if not primary_key in new_primary_keys:
-                del self._restaurant_info[primary_key]
+                keys_to_del.append(primary_key)
+        
+        for key_to_del in keys_to_del:
+            del self._restaurant_info[key_to_del]
 
         for restaurant in all_restaurants:
             self._restaurant_info[restaurant.get_primary_key()] = restaurant
