@@ -58,7 +58,7 @@ class RestaurantRepo():
 
 from domain.GspreadClient import GspreadClient
 
-JSON_KEYFILE_ADDRESS = '../lunchBot-worksheet-key.json'
+JSON_KEYFILE_ADDRESS = 'lunchBot-worksheet-key.json'
 SHEET_NAME = 'woowacourse-lunch-sheet'
 
 gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
