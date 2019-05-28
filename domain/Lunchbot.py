@@ -19,7 +19,6 @@ def run_in_new_thread(fn):
     def run(**payload):
         new_thread = Thread(target=fn, kwargs=payload)
         new_thread.start()
-        new_thread.join()
     return run
 
 @slack.RTMClient.run_on(event='message')
