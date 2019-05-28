@@ -8,7 +8,6 @@ class GspreadClient():
         credentials = self.init_credentials(json_keyfile_address)
         worksheet = self.get_worksheet_with(credentials, file_name)
         self.worksheet = worksheet
-        self.num_of_restaurants = len(self.worksheet.col_values(1)) - 1
     
     ## credential init
     def init_credentials(self, json_keyfile_address):
@@ -34,10 +33,10 @@ class GspreadClient():
         return Restaurant([cell.value for cell in cells])
     
     def get_num_of_restaurants(self):
-        return self.num_of_restaurants
+        return len(self.worksheet.col_values(1)) - 1
 
     def get_all_values(self):
-        cells = self.worksheet.range(f'A2:H{self.get_restaurant_row_num_with(self.num_of_restaurants)}')
+        cells = self.worksheet.range(f'A2:H{self.get_restaurant_row_num_with(self.get_num_of_restaurants())}')
         num_of_restaurant_cell_indices = len(Restaurant.cell_indices)
 
         list_of_list = []
