@@ -16,6 +16,10 @@ import domain.TimeStampTable
 
 def upload_changed_restaurants():
     print("start gspread client")
+    while True:
+        print('==================== upload changed restaurants =======================')
+        restaurant_repo.upload_changed_restaurants()
+        sleep(60)
 
 def fetch_all_restaurants():
     while True:
