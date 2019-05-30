@@ -64,7 +64,7 @@ def send_restaurants_containing_keyword(web_client, channel_id, search_results):
         response_text += result + "\n"
     
     web_client.chat_postMessage(
-        channel_id=channel_id,
+        channel=channel_id,
         attachments=[
             {'text' : response_text}
         ]
