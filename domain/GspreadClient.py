@@ -16,7 +16,9 @@ class GspreadClient():
 
     ## authorize and get worksheet
     def get_worksheet_with(self, credentials, file_name):
-        return gspread.authorize(credentials).open(file_name).get_worksheet(0)
+        gs_client = gspread.authorize(credentials)
+        gs_client.login() # refreshes the token
+        return gs_client.open(file_name).get_worksheet(0)
 
     def get_table_headers(self):
         return self.worksheet.row_values(1)
