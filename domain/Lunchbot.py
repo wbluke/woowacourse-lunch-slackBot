@@ -113,3 +113,7 @@ def update_emoji(**payload):
                 restaurant_repo.update_thumbsup(primary_key)
             elif data['reaction'] == '-1':
                 restaurant_repo.update_thumbsdown(primary_key)
+
+@slack.RTMClient.run_on(event='reaction_removed')
+def update_emoji(**payload):
+    print(payload)

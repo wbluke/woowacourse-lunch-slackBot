@@ -1,6 +1,7 @@
 import os
 from queue import Queue
 from time import sleep
+import datetime
 from threading import Thread, Event
 
 from domain.GspreadClient import GspreadClient
@@ -8,24 +9,17 @@ from domain.Lunchbot import LunchBot
 from domain.RestaurantRepo import restaurant_repo
 import domain.TimeStampTable
 
-# JSON_KEYFILE_ADDRESS = 'lunchBot-worksheet-key.json'
-# SHEET_NAME = 'woowacourse-lunch-sheet'
-# gspreadClient = GspreadClient(JSON_KEYFILE_ADDRESS, SHEET_NAME)
-
-# restaurant_repo = RestaurantRepo(gspreadClient)
-
 def upload_changed_restaurants(uploading_event):
-    print("start gspread client")
     while True:
-        print('==================== upload changed restaurants =======================')
+        print('Upload changed restaurants : ' + str(datetime.datetime.now()))
         restaurant_repo.upload_changed_restaurants()
         uploading_event.set()
-        sleep(20)
+        sleep(180)
 
 def fetch_all_restaurants(uploading_event):
     while True:
         uploading_event.wait()
-        print('======================= fetch all restaurants =========================')
+        print('Fetch all restaurants : ' + str(datetime.datetime.now()) + "\n")
         restaurant_repo.fetch_all_restaurants()
         uploading_event.clear()
 
