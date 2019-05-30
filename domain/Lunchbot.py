@@ -2,9 +2,12 @@ import os
 import slack
 from threading import Thread
 from concurrent.futures import ThreadPoolExecutor
+import datetime
+from pprint import pprint
 
 from domain.RestaurantRepo import restaurant_repo
 from domain.TimeStampTable import TimeStampTable
+from domain.Restaurant import Restaurant
 
 ts_table_of = dict()
 
@@ -62,13 +65,15 @@ def send_recommandation(web_client, channel_id, restaurants):
             ]
         )
 
-        if not channel_id in ts_table_of:
-            new_ts_table = TimeStampTable(size_limit=100)
-            ts_table_of[channel_id] = new_ts_table
-        
-        new_ts = posted.data['ts']
-        primary_key_of = ts_table_of[channel_id]
-        primary_key_of[new_ts] = restaurant.get_primary_key()
+        append_ts_in_ts_table(channel_id, posted.data['ts'], restaurant.get_primary_key())
+
+def append_ts_in_ts_table(channel_id, new_ts, primary_key):
+    if not channel_id in ts_table_of:
+        new_ts_table = TimeStampTable(size_limit=100)
+        ts_table_of[channel_id] = new_ts_table
+    
+    ts_table = ts_table_of[channel_id]
+    ts_table[new_ts] = primary_key
 
 def get_restaurant_color_and_thumb_url_by(restaurant_type):
     restaurant_color = '#000000'
@@ -96,24 +101,48 @@ def get_restaurant_color_and_thumb_url_by(restaurant_type):
     return restaurant_color, restaurant_thumb_url
 
 @slack.RTMClient.run_on(event='reaction_added')
-def update_emoji(**payload):
-    print('====================================== reaction_added =========================================')
-    print(payload)
+def add_reaction_to_repository(**payload):
+    print('=========== reaction_added ============')
+    print('Added Time : ' + str(datetime.datetime.now()))
+    pprint(payload)
+    
     data = payload['data']
     channel_id = data['item']['channel']
     ts = data['item']['ts']
     
-    if channel_id in ts_table_of:
-        primary_key_of = ts_table_of[channel_id]
+    if not channel_id in ts_table_of:
+        return
 
-        if ts in primary_key_of:
-            primary_key = primary_key_of[ts]
-
-            if data['reaction'] == '+1':
-                restaurant_repo.update_thumbsup(primary_key)
-            elif data['reaction'] == '-1':
-                restaurant_repo.update_thumbsdown(primary_key)
+    ts_table = ts_table_of[channel_id]
+    if not ts in ts_table:
+        return
+    
+    primary_key = ts_table[ts]
+    if data['reaction'] == '+1':
+        restaurant_repo.increase_thumbsup_of(primary_key)
+    elif data['reaction'] == '-1':
+        restaurant_repo.increase_thumbsdown_of(primary_key)
 
 @slack.RTMClient.run_on(event='reaction_removed')
-def update_emoji(**payload):
-    print(payload)
+def remove_reaction_from_repository(**payload):
+    print('=========== reaction_removed ============')
+    print('removed Time : ' + str(datetime.datetime.now()))
+    pprint(payload)
+
+    data = payload['data']
+    channel_id = data['item']['channel']
+    ts = data['item']['ts']
+ 
+    if not channel_id in ts_table_of:
+        return
+
+    ts_table = ts_table_of[channel_id]
+    if not ts in ts_table:
+        return
+    
+    primary_key = ts_table[ts]
+
+    if data['reaction'] == '+1':
+        restaurant_repo.decrease_thumbsup_of(primary_key)
+    elif data['reaction'] == '-1':
+        restaurant_repo.decrease_thumbsdown_of(primary_key)

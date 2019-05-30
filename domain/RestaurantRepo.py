@@ -47,18 +47,30 @@ class RestaurantRepo():
             self._gspreadClient.update_good_points_on(primary_key, good_points)
             self._gspreadClient.update_bad_points_on(primary_key, bad_points)
 
-    def update_thumbsup(self, primary_key):
+    def increase_thumbsup_of(self, primary_key):
         if primary_key in self._restaurant_info:
             restaurant = self._restaurant_info[primary_key]
             restaurant.increase_good()
             self.append_primary_key_to_changed_restaurants(primary_key)
 
-    def update_thumbsdown(self, primary_key):
+    def increase_thumbsdown_of(self, primary_key):
         if primary_key in self._restaurant_info:
             restaurant = self._restaurant_info[primary_key]
             restaurant.increase_bad()
             self.append_primary_key_to_changed_restaurants(primary_key)
 
+    def decrease_thumbsup_of(self, primary_key):
+        if primary_key in self._restaurant_info:
+            restaurant = self._restaurant_info[primary_key]
+            restaurant.decrease_good()
+            self.append_primary_key_to_changed_restaurants(primary_key)
+
+    def decrease_thumbsdown_of(self, primary_key):
+        if primary_key in self._restaurant_info:
+            restaurant = self._restaurant_info[primary_key]
+            restaurant.decrease_bad()
+            self.append_primary_key_to_changed_restaurants(primary_key)
+    
     def append_primary_key_to_changed_restaurants(self, primary_key):
         self._changed_restaurants.add(primary_key)
 
