@@ -1,6 +1,7 @@
 import os
 import slack
 from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
 
 from domain.RestaurantRepo import restaurant_repo
 from domain.TimeStampTable import TimeStampTable
@@ -42,7 +43,6 @@ def send_recommandation(web_client, channel_id, restaurants):
             channel=channel_id,
             attachments=[
                 {
-                    'fallback': 'ReferenceError - ' + restaurant.get_naver_place_addr(),
                     'text': '<' + restaurant.get_naver_place_addr() + '|' + restaurant.get_name() + '>',
                     'fields': [
                         {
@@ -98,6 +98,7 @@ def get_restaurant_color_and_thumb_url_by(restaurant_type):
 @slack.RTMClient.run_on(event='reaction_added')
 def update_emoji(**payload):
     print('====================================== reaction_added =========================================')
+    print(payload)
     data = payload['data']
     channel_id = data['item']['channel']
     ts = data['item']['ts']

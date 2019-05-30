@@ -30,7 +30,6 @@ class RestaurantRepo():
         return [copy.deepcopy(self._restaurant_info.get(primary_key)) for primary_key in choiced_keys]
 
     def pick_primary_keys_by_rand(self, primary_keys, num_of_recommendation):
-        print(primary_keys)
         choiced_keys = set()
         while len(choiced_keys) < num_of_recommendation:
             choiced_keys.add(random.choice(primary_keys))
