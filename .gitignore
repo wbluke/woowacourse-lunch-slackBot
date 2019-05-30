@@ -1,4 +1,4 @@
 *.pyc
 __init__.py
 *.json
-.DS_Store
+*.DS_Store*
