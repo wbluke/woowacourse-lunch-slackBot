@@ -30,14 +30,48 @@ def run_in_new_thread(fn):
 def recommend(**payload):
     data = payload['data']
     web_client = payload['web_client']
+    channel_id = data['channel']
     
+    if data['text'].strip() == '?':
+        send_user_guide_to(web_client, channel_id)
+        return
+
     if '밥!' in data['text']:
-        channel_id = data['channel']
+        send_recommandation_to(web_client, channel_id)
+        return
+    
+    keywords = data['text'].split()
+    if 'contains' in keywords:
+        keywords = [keyword for keyword in keywords if keyword != 'contains']
+        search_results = []
+        for keyword in keywords:
+            search_results += restaurant_repo.find_all_restaurants_contains(keyword)
+        
+        send_restaurants_containing_keyword(web_client, channel_id, search_results)
+        return
 
-        restaurants = restaurant_repo.get_random_recommendations_as_many_of(4)
-        send_recommandation(web_client, channel_id, restaurants)
+def send_user_guide_to(web_client, channel_id):
+    web_client.chat_postMessage(
+        channel=channel_id,
+        attachments=[
+            {'text' : "가이드 함수 호출"}
+        ]
+    )
 
-def send_recommandation(web_client, channel_id, restaurants):
+def send_restaurants_containing_keyword(web_client, channel_id, search_results):
+    response_text = ""
+    for result in search_results:
+        response_text += result + "\n"
+    
+    web_client.chat_postMessage(
+        channel_id=channel_id,
+        attachments=[
+            {'text' : response_text}
+        ]
+    )
+
+def send_recommandation_to(web_client, channel_id):
+    restaurants = restaurant_repo.get_random_recommendations_as_many_of(4)
     for restaurant in restaurants:            
         restaurant_type = restaurant.get_type()
         restaurant_color, restaurant_thumb_url = get_restaurant_color_and_thumb_url_by(restaurant_type)
@@ -67,14 +101,6 @@ def send_recommandation(web_client, channel_id, restaurants):
 
         append_ts_in_ts_table(channel_id, posted.data['ts'], restaurant.get_primary_key())
 
-def append_ts_in_ts_table(channel_id, new_ts, primary_key):
-    if not channel_id in ts_table_of:
-        new_ts_table = TimeStampTable(size_limit=100)
-        ts_table_of[channel_id] = new_ts_table
-    
-    ts_table = ts_table_of[channel_id]
-    ts_table[new_ts] = primary_key
-
 def get_restaurant_color_and_thumb_url_by(restaurant_type):
     restaurant_color = '#000000'
     restaurant_thumb_url = 'http://cdn.wbluke.com/lunch_bot_image/'
@@ -99,6 +125,14 @@ def get_restaurant_color_and_thumb_url_by(restaurant_type):
         restaurant_thumb_url += 'etcFood.png'
 
     return restaurant_color, restaurant_thumb_url
+
+def append_ts_in_ts_table(channel_id, new_ts, primary_key):
+    if not channel_id in ts_table_of:
+        new_ts_table = TimeStampTable(size_limit=100)
+        ts_table_of[channel_id] = new_ts_table
+    
+    ts_table = ts_table_of[channel_id]
+    ts_table[new_ts] = primary_key
 
 @slack.RTMClient.run_on(event='reaction_added')
 def add_reaction_to_repository(**payload):
@@ -146,3 +180,4 @@ def remove_reaction_from_repository(**payload):
         restaurant_repo.decrease_thumbsup_of(primary_key)
     elif data['reaction'] == '-1':
         restaurant_repo.decrease_thumbsdown_of(primary_key)
+

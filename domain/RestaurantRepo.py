@@ -1,7 +1,6 @@
 import random
 import copy
 
-
 class RestaurantRepo():
     def __init__(self, gspreadClient):
         self._restaurant_info = dict()
@@ -73,6 +72,14 @@ class RestaurantRepo():
     
     def append_primary_key_to_changed_restaurants(self, primary_key):
         self._changed_restaurants.add(primary_key)
+
+    def find_all_restaurants_contains(self, finding_keyword):
+        all_restaurant_names = []
+        for primary_key, restaurant in self._restaurant_info.items():
+            all_restaurant_names.append(restaurant.get_name())
+        
+        return list(filter(lambda restaurant_name: finding_keyword in restaurant_name, all_restaurant_names))
+
 
 from domain.GspreadClient import GspreadClient
 
