@@ -1,5 +1,14 @@
 class Restaurant():
-    cell_indices = {'primary_key':0, 'name':1, 'type':2, 'popular_menu':3, 'price_of_popular_menu':4, 'naver_place_addr':5, 'good':6, 'bad':7}
+    cell_indices = {
+        'primary_key':0, 
+        'name':1, 
+        'type':2, 
+        'popular_menu':3, 
+        'price_of_popular_menu':4, 
+        'naver_place_addr':5, 
+        'good':6, 
+        'bad':7
+        }
 
     def __init__(self, restaurant_info):
         self.restaurant_info = restaurant_info
@@ -36,3 +45,9 @@ class Restaurant():
 
     def increase_bad(self):
         self.restaurant_info[Restaurant.cell_indices['bad']] += 1
+
+    def decrease_good(self):
+        self.restaurant_info[Restaurant.cell_indices['good']] -= 1
+    
+    def decrease_bad(self):
+        self.restaurant_info[Restaurant.cell_indices['bad']] -= 1
