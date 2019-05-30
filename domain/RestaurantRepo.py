@@ -9,6 +9,9 @@ class RestaurantRepo():
         self._gspreadClient = gspreadClient
         self.fetch_all_restaurants()
 
+    def refresh_gspread_token(self):
+        self._gspreadClient.refresh_token()
+
     def fetch_all_restaurants(self):
         all_restaurants = self._gspreadClient.get_all_restaurants()
         

@@ -11,6 +11,7 @@ import domain.TimeStampTable
 
 def upload_changed_restaurants(uploading_event):
     while True:
+        restaurant_repo.refresh_gspread_token() # expired period : 1 hour
         print('Upload changed restaurants : ' + str(datetime.datetime.now()))
         restaurant_repo.upload_changed_restaurants()
         uploading_event.set()

@@ -6,7 +6,8 @@ from pprint import pprint
 class GspreadClient():
     def __init__(self, json_keyfile_address, file_name):
         credentials = self.init_credentials(json_keyfile_address)
-        worksheet = self.get_worksheet_with(credentials, file_name)
+        self.gs_client = self.get_authorize(credentials)
+        worksheet = self.get_worksheet_with(file_name)
         self.worksheet = worksheet
     
     ## credential init
@@ -14,11 +15,17 @@ class GspreadClient():
         scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
         return ServiceAccountCredentials.from_json_keyfile_name(json_keyfile_address, scope)
 
+    ## authorize to gspread
+    def get_authorize(self, credentials):
+        return gspread.authorize(credentials)
+
     ## authorize and get worksheet
-    def get_worksheet_with(self, credentials, file_name):
-        gs_client = gspread.authorize(credentials)
-        gs_client.login() # refreshes the token
-        return gs_client.open(file_name).get_worksheet(0)
+    def get_worksheet_with(self, file_name):
+        return self.gs_client.open(file_name).get_worksheet(0)
+
+    ## refreshes the access token
+    def refresh_token(self):
+        self.gs_client.login() 
 
     def get_table_headers(self):
         return self.worksheet.row_values(1)
