@@ -41,8 +41,8 @@ def recommend(**payload):
         return
     
     keywords = data['text'].split()
-    if 'contains' in keywords:
-        keywords = [keyword for keyword in keywords if keyword != 'contains']
+    if '있니?' in keywords:
+        keywords = [keyword for keyword in keywords if keyword != '있니?']
         search_results = []
         for keyword in keywords:
             search_results += restaurant_repo.find_all_restaurants_contains(keyword)
@@ -54,7 +54,7 @@ def send_user_guide_to(web_client, channel_id):
     web_client.chat_postMessage(
         channel=channel_id,
         attachments=[
-            {'text' : "가이드 함수 호출"}
+            {'text' : "밥!\t식당 4개 랜덤 추천\ncontains\tsheet에 추가된 식당인지 검색"}
         ]
     )
 
@@ -62,6 +62,9 @@ def send_restaurants_containing_keyword(web_client, channel_id, search_results):
     response_text = ""
     for result in search_results:
         response_text += result + "\n"
+
+    if response_text == "":
+        response_text = "그런 식당은 없어요."
     
     web_client.chat_postMessage(
         channel=channel_id,
