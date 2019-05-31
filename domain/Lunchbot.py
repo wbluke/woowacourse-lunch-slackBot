@@ -62,8 +62,21 @@ def recommend(**payload):
 def send_user_guide_to(web_client, channel_id):
     web_client.chat_postMessage(
         channel=channel_id,
-        attachments=[
-            {'text' : "밥!\t식당 4개 랜덤 추천\ncontains\tsheet에 추가된 식당인지 검색"}
+        attachments= [
+            {
+                "title": "사용할 수 있는 명령어",
+                "fields": [
+                    {
+                        "title": "밥!",
+                        "value": "여러분께 랜덤으로 4개의 식당을 추천해줍니다."
+                    },
+                    {
+                        "title": "있니?",
+                        "value": "식당 검색어와 함께 '있니?'를 붙여주면 저희가 보유한 식당 정보인지를 알려줍니다.\nex) 소박한 있니?"
+                    }
+                ],
+                "color": "#F35A00"
+            }
         ]
     )
 
