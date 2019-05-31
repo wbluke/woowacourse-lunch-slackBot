@@ -4,12 +4,18 @@ from threading import Thread
 from concurrent.futures import ThreadPoolExecutor
 import datetime
 from pprint import pprint
+import logging
 
 from domain.RestaurantRepo import restaurant_repo
 from domain.TimeStampTable import TimeStampTable
 from domain.Restaurant import Restaurant
 
 ts_table_of = dict()
+
+# lunchbot_logger = logging.getLogger("lunchbot")
+# lunchbot_logger.setLevel(logging.INFO)
+# lunchbot_file_handler = logging.FileHandler('lunchbot.log')
+# lunchbot_logger.addHandler(lunchbot_file_handler)
 
 class LunchBot:
     def __init__(self):
@@ -28,6 +34,9 @@ def run_in_new_thread(fn):
 @slack.RTMClient.run_on(event='message')
 @run_in_new_thread
 def recommend(**payload):
+    # lunchbot_logger.info(datetime.datetime.now())
+    # lunchbot_logger.info(payload)
+
     data = payload['data']
     web_client = payload['web_client']
     channel_id = data['channel']
