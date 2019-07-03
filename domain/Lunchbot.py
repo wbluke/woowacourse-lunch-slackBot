@@ -50,7 +50,7 @@ async def recommend(**payload):
         await send_user_guide_to(web_client, channel_id)
         return
 
-    if '밥!' in data['text']:
+    if '밥' in data['text']:
         await send_recommandation_to(web_client, channel_id)
         return
     
