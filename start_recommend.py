@@ -46,6 +46,6 @@ if __name__ == "__main__":
     fetch_thread.start()
 
     lunch_bot = LunchBot()
-    loop1 = asyncio.get_event_loop()
-    loop1.run_until_complete(lunch_bot.start(loop1))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(lunch_bot.start(loop))
     # lunch_bot.start(loop1)

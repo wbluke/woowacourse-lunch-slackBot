@@ -30,8 +30,8 @@ class LunchBot:
     def __init__(self):
         self._slack_token = os.environ['SLACK_API_TOKEN']
 
-    async def start(self, loop1):
-        rtm_client = slack.RTMClient(token=self._slack_token, run_async=True, loop=loop1)
+    async def start(self, loop):
+        rtm_client = slack.RTMClient(token=self._slack_token, run_async=True, loop=loop)
         await asyncio.gather(rtm_client.start())
 
 @slack.RTMClient.run_on(event='message')
@@ -61,7 +61,7 @@ async def recommend(**payload):
         for keyword in keywords:
             search_results += restaurant_repo.find_all_restaurants_contains(keyword)
         
-        send_restaurants_containing_keyword(web_client, channel_id, search_results)
+        await send_restaurants_containing_keyword(web_client, channel_id, search_results)
         return
 
 async def send_user_guide_to(web_client, channel_id):
@@ -93,7 +93,7 @@ async def send_restaurants_containing_keyword(web_client, channel_id, search_res
     if response_text == "":
         response_text = "그런 식당은 없어요."
     
-    web_client.chat_postMessage(
+    await web_client.chat_postMessage(
         channel=channel_id,
         attachments=[
             {'text' : response_text}
@@ -165,7 +165,7 @@ def append_ts_in_ts_table(channel_id, new_ts, primary_key):
     ts_table[new_ts] = primary_key
 
 @slack.RTMClient.run_on(event='reaction_added')
-def add_reaction_to_repository(**payload):
+async def add_reaction_to_repository(**payload):
     data = payload['data']
     channel_id = data['item']['channel']
     ts = data['item']['ts']
@@ -190,7 +190,7 @@ def add_reaction_to_repository(**payload):
     lunchbot_logger.info('=========== reaction_added ============\n')
 
 @slack.RTMClient.run_on(event='reaction_removed')
-def remove_reaction_from_repository(**payload):
+async def remove_reaction_from_repository(**payload):
     data = payload['data']
     channel_id = data['item']['channel']
     ts = data['item']['ts']
