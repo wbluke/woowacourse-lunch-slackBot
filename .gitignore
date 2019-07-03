@@ -3,3 +3,4 @@ __init__.py
 *.json
 *.DS_Store*
 *.log
+\=2.0.0
