@@ -4,6 +4,7 @@ from time import sleep
 import datetime
 from threading import Thread, Event
 import logging
+import asyncio
 
 from domain.GspreadClient import GspreadClient
 from domain.Lunchbot import LunchBot
@@ -21,7 +22,7 @@ def upload_changed_restaurants(uploading_event):
         uploading_thread_logger.info('Upload changed restaurants : ' + str(datetime.datetime.now()))
         restaurant_repo.upload_changed_restaurants()
         uploading_event.set()
-        sleep(10)
+        sleep(180)
 
 def fetch_all_restaurants(uploading_event):
     fetching_thread_logger = logging.getLogger("fetch")
@@ -45,4 +46,6 @@ if __name__ == "__main__":
     fetch_thread.start()
 
     lunch_bot = LunchBot()
-    lunch_bot.start()        
+    loop1 = asyncio.get_event_loop()
+    loop1.run_until_complete(lunch_bot.start(loop1))
+    # lunch_bot.start(loop1)
