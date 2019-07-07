@@ -46,14 +46,6 @@ async def recommend(**payload):
         print("text field 없는 데이터가 들어옴.")
         return
     
-    if data['text'].strip() == '?':
-        await send_user_guide_to(web_client, channel_id)
-        return
-
-    if '밥' in data['text']:
-        await send_recommandation_to(web_client, channel_id)
-        return
-    
     keywords = data['text'].split()
     if '있니?' in keywords:
         keywords = [keyword for keyword in keywords if keyword != '있니?']
@@ -64,6 +56,14 @@ async def recommend(**payload):
         await send_restaurants_containing_keyword(web_client, channel_id, search_results)
         return
 
+    if data['text'].strip() == '?':
+        await send_user_guide_to(web_client, channel_id)
+        return
+
+    if '밥' in data['text']:
+        await send_recommandation_to(web_client, channel_id)
+        return
+    
 async def send_user_guide_to(web_client, channel_id):
     await web_client.chat_postMessage(
         channel=channel_id,
@@ -72,7 +72,7 @@ async def send_user_guide_to(web_client, channel_id):
                 "title": "사용할 수 있는 명령어",
                 "fields": [
                     {
-                        "title": "밥!",
+                        "title": "밥",
                         "value": "여러분께 랜덤으로 4개의 식당을 추천해줍니다."
                     },
                     {
