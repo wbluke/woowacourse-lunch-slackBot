@@ -29,7 +29,10 @@ class RestaurantRepo():
 
     def get_random_recommendations_as_many_of(self, num_of_recommendation):
         choiced_keys = self.pick_primary_keys_by_rand(self.get_primary_keys(), num_of_recommendation)
-        return [copy.deepcopy(self._restaurant_info.get(primary_key)) for primary_key in choiced_keys]
+        return self.get_recommendations_as_many_of(4, choiced_keys)
+
+    def get_recommendations_as_many_of(self, num_of_recommendation, restaurant_keys):
+        return [copy.deepcopy(self._restaurant_info.get(primary_key)) for primary_key in restaurant_keys]
 
     def pick_primary_keys_by_rand(self, primary_keys, num_of_recommendation):
         choiced_keys = set()
@@ -82,6 +85,13 @@ class RestaurantRepo():
             all_restaurant_names.append(restaurant.get_name())
         
         return list(filter(lambda restaurant_name: finding_keyword in restaurant_name, all_restaurant_names))
+
+    def get_restaurant_keys_by_type(self, type):
+        restaurant_keys = []
+        for primary_key, restaurant in self._restaurant_info.items():
+            if (type == restaurant.get_type()):
+                restaurant_keys.append(primary_key)
+        return restaurant_keys
 
 
 from domain.GspreadClient import GspreadClient

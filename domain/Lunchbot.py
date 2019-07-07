@@ -56,12 +56,32 @@ async def recommend(**payload):
         await send_restaurants_containing_keyword(web_client, channel_id, search_results)
         return
 
-    if data['text'].strip() == '?':
+    keyword = data['text'].strip()
+
+    if keyword == '?':
         await send_user_guide_to(web_client, channel_id)
         return
 
-    if '밥' in data['text']:
-        await send_recommandation_to(web_client, channel_id)
+    if keyword == '밥':
+        restaurants = restaurant_repo.get_random_recommendations_as_many_of(4)
+        await send_recommendation_to(web_client, channel_id, restaurants)
+        return
+
+    if keyword == '기' or '기타':
+        restaurant_keys = restaurant_repo.get_restaurant_keys_by_type('기타')
+        restaurants = restaurant_repo.get_recommendations_as_many_of(4, restaurant_keys)
+        await send_recommendation_to(web_client, channel_id, restaurants)
+        return
+
+    short_name_of_types = ['한', '중', '일', '양', '분']
+    full_name_of_types = [type + '식' for type in short_name_of_types]
+    
+    if keyword in short_name_of_types or keyword in full_name_of_types:
+        if len(keyword) == 1:
+            keyword += '식'
+        restaurant_keys = restaurant_repo.get_restaurant_keys_by_type(keyword)
+        restaurants = restaurant_repo.get_recommendations_as_many_of(4, restaurant_keys)
+        await send_recommendation_to(web_client, channel_id, restaurants)
         return
     
 async def send_user_guide_to(web_client, channel_id):
@@ -73,12 +93,16 @@ async def send_user_guide_to(web_client, channel_id):
                 "fields": [
                     {
                         "title": "밥",
-                        "value": "여러분께 랜덤으로 4개의 식당을 추천해줍니다."
+                        "value": "여러분께 랜덤으로 4개의 식당을 추천해 줍니다."
+                    },
+                    {
+                        "title": "한/중/일/양/분/기",
+                        "value": "식당 종류 별(한식, 중식, 일식, 양식, 분식, 기타)로 4개의 식당을 추천해 줍니다.\n'한식'처럼 풀네임으로 알려주셔도 추천합니다."
                     },
                     {
                         "title": "있니?",
                         "value": "식당 검색어와 함께 '있니?'를 붙여주면 저희가 보유한 식당 정보인지를 알려줍니다.\nex) 소박한 있니?"
-                    }
+                    },
                 ],
                 "color": "#F35A00"
             }
@@ -100,8 +124,7 @@ async def send_restaurants_containing_keyword(web_client, channel_id, search_res
         ]
     )
 
-async def send_recommandation_to(web_client, channel_id):
-    restaurants = restaurant_repo.get_random_recommendations_as_many_of(4)
+async def send_recommendation_to(web_client, channel_id, restaurants):
     for restaurant in restaurants:            
         restaurant_type = restaurant.get_type()
         restaurant_color, restaurant_thumb_url = get_restaurant_color_and_thumb_url_by(restaurant_type)
