@@ -67,7 +67,7 @@ async def recommend(**payload):
         await send_recommendation_to(web_client, channel_id, restaurants)
         return
 
-    if keyword == '기' or '기타':
+    if keyword == '기' or keyword == '기타':
         restaurant_keys = restaurant_repo.get_restaurant_keys_by_type('기타')
         restaurants = restaurant_repo.get_recommendations_as_many_of(4, restaurant_keys)
         await send_recommendation_to(web_client, channel_id, restaurants)

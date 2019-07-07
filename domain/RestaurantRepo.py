@@ -29,16 +29,21 @@ class RestaurantRepo():
 
     def get_random_recommendations_as_many_of(self, num_of_recommendation):
         choiced_keys = self.pick_primary_keys_by_rand(self.get_primary_keys(), num_of_recommendation)
-        return self.get_recommendations_as_many_of(4, choiced_keys)
+        return self.get_deepcopied_restaurants_by(choiced_keys)
 
     def get_recommendations_as_many_of(self, num_of_recommendation, restaurant_keys):
-        return [copy.deepcopy(self._restaurant_info.get(primary_key)) for primary_key in restaurant_keys]
+        choiced_keys = self.pick_primary_keys_by_rand(restaurant_keys, num_of_recommendation)
+        return self.get_deepcopied_restaurants_by(choiced_keys)
 
     def pick_primary_keys_by_rand(self, primary_keys, num_of_recommendation):
         choiced_keys = set()
         while len(choiced_keys) < num_of_recommendation:
             choiced_keys.add(random.choice(primary_keys))
         return list(choiced_keys)
+
+    def get_deepcopied_restaurants_by(self, restaurant_keys):
+        return [copy.deepcopy(self._restaurant_info.get(primary_key)) for primary_key in restaurant_keys]
+
     
     def get_primary_keys(self):
         return list(self._restaurant_info.keys())
