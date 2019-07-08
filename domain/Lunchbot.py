@@ -3,7 +3,8 @@ import slack
 from threading import Thread
 from concurrent.futures import ThreadPoolExecutor
 import datetime
-from pprint import pprint
+from pytz import timezone, utc
+import pprint
 import logging
 import asyncio
 import time
@@ -14,9 +15,18 @@ from domain.Restaurant import Restaurant
 
 ts_table_of = dict()
 
+def customTime(*args):
+    utc_dt = utc.localize(datetime.datetime.utcnow())
+    KST = timezone("Asia/Seoul")
+    converted = utc_dt.astimezone(KST)
+    return converted.timetuple()
+
+logging.Formatter.converter = customTime
+
 lunchbot_logger = logging.getLogger("lunchbot")
 lunchbot_logger.setLevel(logging.INFO)
 lunchbot_file_handler = logging.FileHandler('lunchbot.log')
+
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s \n %(message)s \n')
 lunchbot_file_handler.setFormatter(formatter)
 lunchbot_logger.addHandler(lunchbot_file_handler)
@@ -36,8 +46,6 @@ class LunchBot:
 
 @slack.RTMClient.run_on(event='message')
 async def recommend(**payload):
-    lunchbot_logger.info(payload)
-
     data = payload['data']
     web_client = payload['web_client']
     channel_id = data['channel']
@@ -45,9 +53,10 @@ async def recommend(**payload):
     if 'text' not in data.keys():
         print("text field 없는 데이터가 들어옴.")
         return
-    
+
     keywords = data['text'].split()
     if '있니?' in keywords:
+        lunchbot_logger.info(pprint.pformat(data, indent=4))
         keywords = [keyword for keyword in keywords if keyword != '있니?']
         search_results = []
         for keyword in keywords:
@@ -59,15 +68,18 @@ async def recommend(**payload):
     keyword = data['text'].strip()
 
     if keyword == '?':
+        lunchbot_logger.info(pprint.pformat(data, indent=4))
         await send_user_guide_to(web_client, channel_id)
         return
 
-    if keyword == '밥':
+    if keyword == '밥' or keyword == '밥!':
+        lunchbot_logger.info(pprint.pformat(data, indent=4))
         restaurants = restaurant_repo.get_random_recommendations_as_many_of(4)
         await send_recommendation_to(web_client, channel_id, restaurants)
         return
 
     if keyword == '기' or keyword == '기타':
+        lunchbot_logger.info(pprint.pformat(data, indent=4))
         restaurant_keys = restaurant_repo.get_restaurant_keys_by_type('기타')
         restaurants = restaurant_repo.get_recommendations_as_many_of(4, restaurant_keys)
         await send_recommendation_to(web_client, channel_id, restaurants)
@@ -77,6 +89,7 @@ async def recommend(**payload):
     full_name_of_types = [type + '식' for type in short_name_of_types]
     
     if keyword in short_name_of_types or keyword in full_name_of_types:
+        lunchbot_logger.info(pprint.pformat(data, indent=4))
         if len(keyword) == 1:
             keyword += '식'
         restaurant_keys = restaurant_repo.get_restaurant_keys_by_type(keyword)
